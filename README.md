@@ -58,9 +58,33 @@
     * **匿名内部类**：以特定形式创建一个类的子类，它没有具体的名字。
     * **嵌套内部类**：用 static 修饰的内部类。它的作用类似于一个静态方法。
 * **为什么需要内部类？**
-    ```
-    
-    ```
+    最主要的原因在于：内部类可以解决多重继承的问题。但我们通常不是说实现多个接口可以解决多重继承问题吗？个人认为，使用多个接口实现，如果存在相同的方法名，那么对于该重名方法，类在实现该方法后，这个重名方法只会存在一种实现，如下：
+
+        public class SubClass implements Interface1, interface2 {
+            public void method() {
+                // 在本类中只能提供一种实现
+            }
+        }
+        interface1 {
+            void method();
+        }
+        interface2 {
+            void method();
+        }
+
+    那么如果使用内部类来实现不同接口的重名方法，方式如下：
+
+        public class SubClass implements Interface1 {
+            public void method() {
+                // 这里提供一种实现方式
+            }
+            public innerClass implements Interface2 {
+                public void method() {
+                    // 这里提供另一种实现方式
+                }     
+            }
+        }
+    可以说，内部类更完美地实现了“多重继承”。
 
 
 
