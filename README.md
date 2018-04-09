@@ -88,6 +88,36 @@
     内部类在事件驱动中可以扮演重要角色，不同的内部类继承“基础事件”后实现不同的功能。\
 
 ### Chapter 11 持有对象
-* ```Arrays.asList(T... a)```返回一个由数组支持的固定长度的```List```,对于该```List```的操作将直接修改底层数组,因此无法支持对集合元素的添加和删除。
-* Collection 的构造方法中可以接受另一个 Collection，用它进行初始化，那么我们可以使用 Arrays.List() 方法生成 Collection 构造的参数。**但是**，Collection.addAll() 方法性能更好，可以通过构建一个空的 Collection, 然后调用 Collection.addAll() 进行填充（原文为 Collecations.addAll(),应该是手误）。
+* Collection 的构造方法中可以接受另一个 Collection，用它进行初始化，那么我们可以使用 Arrays.List() 方法生成 Collection 构造的参数。**但是**，Collection.addAll() 方法性能更好，可以通过构建一个空的 Collection, 然后调用 Collections.addAll() 进行填充, 为什么不调用 Collection.addAll() 方法呢？ 因为该方法只接受一个 Collection 参数，而 Collections.addAll() 接受可变长度的参数列表。
+* ```Arrays.asList(T... a)```返回一个由数组支持的固定长度的```List```,对于该```List```的操作将直接修改底层数组,因此无法支持对集合元素的添加和删除。同时，在使用该方法时，可变参数列表中的类型需要注意：如果参数列表中的所有参数都是泛型类子类的子类，则需要使用“显示类型参数说明”提示编译器：
+
+        // 定义类
+        class Fa {}
+        class Son1 {}
+        class GraSon1 extends Son1 {}
+        class GraSon2 extends Son1 {}
+
+        public class AsListTest {
+            public static void main(String[] args) {
+                // 编译不通过，提示 Required List<Fa>, Found List<Son1>
+                // List<Fa> list = Arrays.AsList(new GraSon1(), new GranSon2());
+                // 需要提供“显示类型参数说明”
+                List<Fa> list = Arrays.<Fa>AsList(new GraSon1(), new GranSon2());
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
