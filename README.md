@@ -87,5 +87,7 @@
     可以说，内部类更完美地实现了“多重继承”。\
     内部类在事件驱动中可以扮演重要角色，不同的内部类继承“基础事件”后实现不同的功能。\
 
-
+### Chapter 11 持有对象
+* ```Arrays.asList(T... a)```返回一个由数组支持的固定长度的```List```,对于该```List```的操作将直接修改底层数组,因此无法支持对集合元素的添加和删除。
+* Collection 的构造方法中可以接受另一个 Collection，用它进行初始化，那么我们可以使用 Arrays.List() 方法生成 Collection 构造的参数。**但是**，Collection.addAll() 方法性能更好，可以通过构建一个空的 Collection, 然后调用 Collection.addAll() 进行填充（原文为 Collecations.addAll(),应该是手误）。
 
