@@ -107,12 +107,12 @@
         }
 * List.subList(fromIndex, toIndex) 方法返回原 list 的一个片段，片段范围 (fromIndex, toIndex]，该片段是一个 SubList 对象，这个对象持有了原 list 的一个引用，通过偏移量（offset）和片段的范围（size = toIndex - fromIndex）构成了原 list 的部分片段的“假象”，实际上对于 subList 的操作都是**直接对于原 list 的操作！**
 
-    List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
-    List<Integer> subList = list.subList(1, 5);// 包括索引1，不包括索引5，即：[2, 3, 4, 5]
-    // 打乱 subList 顺序
-    Collections.shuffle(subList);
-    System.out.println("打乱后的subList：" + subList);// 打乱后的subList：[4, 5, 2, 3]
-    System.out.println("没动过的list：" + list);// 没动过的list：[1, 4, 5, 2, 3, 6, 7, 8]
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8);
+        List<Integer> subList = list.subList(1, 5);// 包括索引1，不包括索引5，即：[2, 3, 4, 5]
+        // 打乱 subList 顺序
+        Collections.shuffle(subList);
+        System.out.println("打乱后的subList：" + subList);// 打乱后的subList：[4, 5, 2, 3]
+        System.out.println("没动过的list：" + list);// 没动过的list：[1, 4, 5, 2, 3, 6, 7, 8]
    
 
     
