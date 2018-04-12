@@ -21,7 +21,7 @@
 * `main()`方法中的`args`参数用于存储命令行参数。
 
 ### Chapter 5 初始化与清理
-* 在使用`new`关键字穿件对象时，会为对象分配存储空间，并调用相应构造器。构造器用于对象的创建和初始化。
+* 在使用`new`关键字创建对象时，会为对象分配存储空间，并调用相应构造器。构造器用于对象的创建和初始化。
 * 成员变量的初始化总是在构造器初始化之前，不管成员变量和构造器声明的顺序如何。
 * 与静态代码块对应的，有非静态代码块，只是非静态代码块在对象的每一次初始化时都会被调用！
 * 当存在多个可变参数方法重载时，无法调用0个参数的该方法
@@ -113,9 +113,10 @@
         Collections.shuffle(subList);
         System.out.println("打乱后的subList：" + subList);// 打乱后的subList：[4, 5, 2, 3]
         System.out.println("没动过的list：" + list);// 没动过的list：[1, 4, 5, 2, 3, 6, 7, 8]
-   
-
-    
+   
+* Queue 队列是一个典型的先进先出（FIRST-IN-FIRST-OUT, FIFO）容器。PriorityQueue 通过元素内置的比较器，或者传入一个比较器改变队列的优先级。
+* Collection 和 Iterator 接口都对底层的具体容器进行了解耦，在迭代集合时，可以不必考虑具体容器的迭代方式。Collection 接口有许多方法，直接实现该接口比较繁琐，可以通过继承 AbstractCollection 类，实现 Iterator() 和 size()方法即可，但是需要考虑到 java 语言是单一继承的，想要使用继承时可能有一些限制，那么此时通过实现 Iterator 接口是比较灵活的，需要手动实现 hasNext(),next() 和 remove() 方法。
+* JDK 1.5 引入了 Iterable 接口，实现了该接口的类都可以使用 foreach 语句。foreach 语句只能对数组 和 Iterable 使用
    
 
 
