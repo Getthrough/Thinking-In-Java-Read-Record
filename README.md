@@ -119,6 +119,34 @@
 * JDK 1.5 引入了 Iterable 接口，实现了该接口的类都可以使用 foreach 语句。foreach 语句只能对数组 和 Iterable 使用
    
 
+### Chapter 21 并发
+
+* Java SE5 的 java.util.concurrent 包中的执行器(Executor)用于管理 Thread 对象，简化了并发编程。ExecutorService（具有服务生命周期的Executor）知道如何构建恰当的上下文来执行 Runnable 对象。
+
+        // 使用 Executors 的静态方法创建 ExecutorService
+        ExecutorService fixedThreadPool = Executors.newFiexedThreadPool(10);// 创建固定线程数的线程池
+        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();// 根据任务数量在线程池中动态创建线程
+        ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(3);// 创建可执行定时任务的线程池
+        ExecutorService singleThreadScheduleExecutor = Executors.newSingleThreadExecutor();// 创建不可配置的单一线程（如果任务未执行完成时线程死亡，则会创建新线程继续执行任务）
+        ScheduleExecutorService singleThreadScheduleExecutor = Executors.newSingleThreadScheduledExecutor();// 创建可执行定时任务的单一线程
+        
+* Executors 的静态方法帮助我们方便地创建了线程池，其实它都是通过 ThreadPoolExecutor 对象，配置相应参数来创建线程池。我们可以通过定制参数参数来创建 ThreadPoolExecutor 对象：
+
+        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+                                                                    100,
+
+                                                                    );
+
+
+
+
+
+
+
+
+
+
+
 
 
 
