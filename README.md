@@ -133,9 +133,14 @@
 * Executors 的静态方法帮助我们方便地创建了线程池，其实它都是通过 ThreadPoolExecutor 对象，配置相应参数来创建线程池。我们可以通过定制参数参数来创建 ThreadPoolExecutor 对象：
 
         ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                                                                    100,
-
-                                                                    );
+                100,                            //corePoolSize 核心线程数，当池中线程数量未达到核心线程数，接受到任务时将直接创建新线程
+                200,                            //maximumPoolSize 最大线程数，根据下方配置的拒绝策略，超出最大值后做出响应
+                60L,                            //keepAliveTime 存活时间，若线程数超过核心线程数，则超过部分县城的空闲时间大于存活时间会被终止
+                TimeUnit.SECONDS,               //unit 时间单位
+                new ArrayBlockingQueue<Runnable>(1000, true),   //workQueue 工作队列，当新任务进来时，核心线程都不处于空闲，则该任务被加入队列
+                Executors.defaultThreadFactory(),               //threadFactory 线程工厂，表明使用该工厂来创建线程
+                new ThreadPoolExecutor.AbortPolicy()            //rejectedExecutionHandler 拒绝策略，当工作队列排满，且线程数超过最大线程后的应对策略
+                );
 
 
 
