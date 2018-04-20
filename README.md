@@ -123,27 +123,54 @@
 
 * Java SE5 的 java.util.concurrent 包中的执行器(Executor)用于管理 Thread 对象，简化了并发编程。ExecutorService（具有服务生命周期的Executor）知道如何构建恰当的上下文来执行 Runnable 对象。
 
-        // 使用 Executors 的静态方法创建 ExecutorService
-        ExecutorService fixedThreadPool = Executors.newFiexedThreadPool(10);// 创建固定线程数的线程池
-        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();// 根据任务数量在线程池中动态创建线程
-        ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(3);// 创建可执行定时任务的线程池
-        ExecutorService singleThreadScheduleExecutor = Executors.newSingleThreadExecutor();// 创建不可配置的单一线程（如果任务未执行完成时线程死亡，则会创建新线程继续执行任务）
-        ScheduleExecutorService singleThreadScheduleExecutor = Executors.newSingleThreadScheduledExecutor();// 创建可执行定时任务的单一线程
+            // 使用 Executors 的静态方法创建 ExecutorService
+            ExecutorService fixedThreadPool = Executors.newFiexedThreadPool(10);// 创建固定线程数的线程池
+            ExecutorService cachedThreadPool = Executors.newCachedThreadPool();// 根据任务数量在线程池中动态创建线程
+            ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(3);// 创建可执行定时任务的线程池
+            ExecutorService singleThreadScheduleExecutor = Executors.newSingleThreadExecutor();// 创建不可配置的单一线程（如果任务未执行完成时线程死亡，则会创建新线程继续执行任务）
+            ScheduleExecutorService singleThreadScheduleExecutor = Executors.newSingleThreadScheduledExecutor();// 创建可执行定时任务的单一线程
         
 * Executors 的静态方法帮助我们方便地创建了线程池，其实它都是通过 ThreadPoolExecutor 对象，配置相应参数来创建线程池。我们可以通过定制参数参数来创建 ThreadPoolExecutor 对象：
 
-        ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
-                100,                            //corePoolSize 核心线程数，当池中线程数量未达到核心线程数，接受到任务时将直接创建新线程
-                200,                            //maximumPoolSize 最大线程数，根据下方配置的拒绝策略，超出最大值后做出响应
-                60L,                            //keepAliveTime 存活时间，若线程数超过核心线程数，则超过部分县城的空闲时间大于存活时间会被终止
-                TimeUnit.SECONDS,               //unit 时间单位
-                new ArrayBlockingQueue<Runnable>(1000, true),   //workQueue 工作队列，当新任务进来时，核心线程都不处于空闲，则该任务被加入队列
-                Executors.defaultThreadFactory(),               //threadFactory 线程工厂，表明使用该工厂来创建线程
-                new ThreadPoolExecutor.AbortPolicy()            //rejectedExecutionHandler 拒绝策略，当工作队列排满，且线程数超过最大线程后的应对策略
-                );
+            ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(
+                    100,                            //corePoolSize 核心线程数，当池中线程数量未达到核心线程数，接受到任务时将直接创建新线程
+                    200,                            //maximumPoolSize 最大线程数，根据下方配置的拒绝策略，超出最大值后做出响应
+                    60L,                            //keepAliveTime 存活时间，若线程数超过核心线程数，则超过部分县城的空闲时间大于存活时间会被终止
+                    TimeUnit.SECONDS,               //unit 时间单位
+                    new ArrayBlockingQueue<Runnable>(1000, true),   //workQueue 工作队列，当新任务进来时，核心线程都不处于空闲，则该任务被加入队列
+                    Executors.defaultThreadFactory(),               //threadFactory 线程工厂，表明使用该工厂来创建线程
+                    new ThreadPoolExecutor.AbortPolicy()            //rejectedExecutionHandler 拒绝策略，当工作队列排满，且线程数超过最大线程后的应对策略
+                    );
 
+* 执行 Runnable 任务没有返回值，想要任务执行返回相应值，可以执行 Callable 任务。Callable 定义了一个 call() 方法,通过调用 call() 方法返回一个任务的返回值。ExecutorService 通过调用 submit() 方法执行任务，返回一个 Future 对象。通过 Future 的 get() 方法获得返回值，注意，在 任务执行结束前，调用 get() 是一直阻塞的，可通过 isDone() 方法判断任务是否执行完成。
 
+            // 创建 callable 任务
+            class CallTask implements Callable<String> {
 
+                @Override
+                public String call() throws Exception {
+                    return "the String from callable task";
+                }
+            }
+
+             public class Test {
+                public static void main(String[] args) {
+                    ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+                    Future<String> future = cachedThreadPool.submit(new CallTask());
+                    while (future.isDone()) {
+                        System.out.println(future.get());
+                    }
+                }
+             }
+
+* Java SE 5 引入了更加显示的 sleep()，通过 TimeUnit 指定时间单元再调用 sleep() 方法，原来是通过 Thread 的静态方法 sleep():
+
+            // before jdk 1.5
+            Thread.sleep(1000);// 单位毫秒
+
+            // after jdk 1.5 we can use
+            TimeUnit.SECONDS.sleep(2);
+        
 
 
 
