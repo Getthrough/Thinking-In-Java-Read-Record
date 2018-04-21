@@ -171,7 +171,32 @@
             // after jdk 1.5 we can use
             TimeUnit.SECONDS.sleep(2);
         
+* 通常，在一个线程中抛出的异常是无法在另一条线程中捕获的。JDK 1.5 引进了 Thread.UncaughtExceptioinHandler。通过在线程中设置未捕捉异常处理器，那么在另一个线程中可以捕获从该线程中逃逸的异常。
 
+        // 创建未捕捉的异常处理器
+        class MyHandler implements Thread.UncaughtExceptionHandler {
+            public void uncaughtException(Thread t, Throwable e) {
+                System.out.println("caught exception :" + e);
+            }
+        }
+        // 创建线程工厂
+        class HandlerThreadFactory implements ThreadFactory {
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r);
+                System.out.println("created " + t);
+                // 设置异常处理器
+                t.setUncaughtExceptionHandler(new MyHandler());
+                return t;
+            }
+       }
+       
+       public class UncaughtExceptionThreadTest {
+            ExecutorService uncaughtExceptionThreadPool = Executors.newCachedThreadPool(new HandlerThreadFactory());
+            // uncaughtExceptionThreadPool.execute(some task);
+       }
+        
+        
+        
 
 
 
