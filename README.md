@@ -173,31 +173,59 @@
         
 * 通常，在一个线程中抛出的异常是无法在另一条线程中捕获的。JDK 1.5 引进了 Thread.UncaughtExceptioinHandler。通过在线程中设置未捕捉异常处理器，那么在另一个线程中可以捕获从该线程中逃逸的异常。
 
-        // 创建未捕捉的异常处理器
-        class MyHandler implements Thread.UncaughtExceptionHandler {
-            public void uncaughtException(Thread t, Throwable e) {
-                System.out.println("caught exception :" + e);
+            // 创建未捕捉的异常处理器
+            class MyHandler implements Thread.UncaughtExceptionHandler {
+                public void uncaughtException(Thread t, Throwable e) {
+                    System.out.println("caught exception :" + e);
+                }
             }
-        }
-        // 创建线程工厂
-        class HandlerThreadFactory implements ThreadFactory {
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r);
-                System.out.println("created " + t);
-                // 设置异常处理器
-                t.setUncaughtExceptionHandler(new MyHandler());
-                return t;
-            }
-       }
-       
-       public class UncaughtExceptionThreadTest {
-            ExecutorService uncaughtExceptionThreadPool = Executors.newCachedThreadPool(new HandlerThreadFactory());
-            // uncaughtExceptionThreadPool.execute(some task);
-       }
-        
-        
-        
+            // 创建线程工厂
+            class HandlerThreadFactory implements ThreadFactory {
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r);
+                    System.out.println("created " + t);
+                    // 设置异常处理器
+                    t.setUncaughtExceptionHandler(new MyHandler());
+                    return t;
+                }
+           }
 
+           public class UncaughtExceptionThreadTest {
+                ExecutorService uncaughtExceptionThreadPool = Executors.newCachedThreadPool(new HandlerThreadFactory());
+                // uncaughtExceptionThreadPool.execute(some task);
+           }
+        
+        
+* 在并发情况下，将类的字段设置为 private 是非常重要的，否则即使加了锁，其他线程可以不通过同步的方法就可以直接改变字段的值，从而产生并发问题。
+
+* 一个首先获得到锁的任务可以多次获得对象的锁。在一个加锁的方法中调用了另一个加锁的方法，那么该任务就会获得该对象的多个锁，锁的计数会增加，当任务每离开一个加锁方法，计数器减一，当计数器减为0时，其他任务才能去获取这个对象的锁。
+
+* ReetrantLock, 使用它可以显示地进行加锁，并且相比 synchronized 关键字，ReetrantLock 可以进行更细粒度的控制：
+
+            ReentrantLock lock = new ReentrantLock();
+            // 尝试在3秒钟之内获取锁
+            boolean isGot = lock.tryLock(3, TimeUnit.SECONDS);
+            try {
+                if (isGot) 
+                    // 加锁
+                    lock.lock();
+                else 
+                    // 没获取到，做其他事情
+                
+            } catch(InterruptedException e) {
+                
+            } finally {
+                // 必须在finally块中释放锁
+                if (isGot)
+                    lock.unlock();
+            }
+            // 如果当前线程没有获取到锁，但对锁进行释放操作，会抛出 IllegalMonitorStateException
+            
+* 原子性操作表示一个或一组不可分割的操作，如果操作开始进行，那么一定会在上下文切换之前完成操作。对于 long 和 double 这种占 64 位字节的基本数据类型，JVM 在读取和写入时将其当作两个 32 位操作进行，因此其中存在上下文切换的可能，所以对于 long 和 double 的操作并不是原子性的！通过使用 volatile 关键字可保证上述操作的原子性。因为 volatile 保证了线程间的可见性，一旦对某个 volatile 字段进行了写操作，那么所有的写操作都能看见这种变化。
+
+* 不要轻易地使用原子性和可见性去进行无锁编程，这是存在很大风险的！
+
+* 原子类 位于 java.util.concurrent.atomic 包下，
 
 
 
