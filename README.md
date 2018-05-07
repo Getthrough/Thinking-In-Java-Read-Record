@@ -211,7 +211,6 @@
                     lock.lock();
                 else 
                     // 没获取到，做其他事情
-                
             } catch(InterruptedException e) {
                 
             } finally {
