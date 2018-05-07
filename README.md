@@ -225,9 +225,39 @@
 
 * 不要轻易地使用原子性和可见性去进行无锁编程，这是存在很大风险的！
 
-* 原子类 位于 java.util.concurrent.atomic 包下，
+* 原子类 位于 java.util.concurrent.atomic 包下，这个原子类提供了“机器”级别的原子性，举例 AtomicInteger 的 addAndGet 方法底层调用的是本地操作系统类库中的 compareAndSwapInt 来实现操作的原子性。
 
+* 调用 sleep() 和 yield() 方法并不会释放锁，wait() 方法的调用会释放锁，这意味着其他同步方法在该方法的 wait 期间可以被其他线程访问。其中 wait，notify 和 notifyAll 方法只能在同步方法或同步块中调用，因为它们需要释放对象的锁，如果在其他非同步代码中调用，虽然没有编译报错，但是在运行期会抛出 IllegalMonitorStateException 异常。
 
+* 除了相互持有对方的锁并等待对方锁释放引起的死锁外，线程的无期限 wait 也会造成死锁：
+
+            // 信号错失演示
+            boolean flag = true;
+            Object lock = new Object;
+            // method1
+            public void method1() {
+                while (flag) {
+                    synchronized(lock) {
+                        lock.wait();
+                    }
+                }
+            }
+            // method2
+            public void method2() {
+                synchronized(lock) {
+                    flag = false;
+                    lock.notify();
+                }
+            }
+            
+在上面这个例子中，如果 method1 中 while 判断条件通过后，执行权被另一条线程获取，此时 lock 的锁被执行 method2 的线程获取，并进行唤醒。其后 method1 继续执行，但是在这个时候执行 method1 的线程无法意识到条件已经发生改变，继续执行，导致 wait() 方法无法被唤醒导致死锁。method1 应该如下处理：
+            
+            // method2
+            synchronized(lock) {
+                while(flag) {
+                    lock.wailt();
+                }
+            }
 
 
 
